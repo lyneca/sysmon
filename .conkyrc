@@ -1,0 +1,77 @@
+conky.config = {
+  update_interval=0.5,
+  out_to_console=false,
+  out_to_stderr=false,
+  alignment="top_right",
+  own_window=true,
+  background=false,
+  own_window_type="dock",
+  own_window_transparent=true,
+  own_window_hints="undecorated,below,sticky,skip_taskbar,skip_pager",
+  double_buffer=true,
+  gap_y=310,
+  -- gap_y=10,
+  lua_load='~/.conky/scripts/lua_scripts.lua'
+}
+
+conky.text = [[
+$time
+$nodename $sysname $machine
+$kernel
+entrop: $entropy_bar
+POWER${tab 2}${hr 2}
+  status: $battery
+ percent: $battery_percent%
+ adapter: $acpiacadapter
+  remain: $battery_bar
+    time: $battery_time
+
+NETWORK${tab 2}${hr 2}
+${if_up enp3s0} enp3s0 ethernet
+${downspeedgraph enp3s0 -l}
+  addr: ${addr enp3s0}
+  down: ${downspeedf enp3s0} KiB/s$endif
+${if_up wlp2s0} wlp2s0 wireless
+${downspeedgraph wlp2s0 -l}
+  addr: ${addr wlp2s0}
+   wap: ${wireless_essid wlp2s0}
+  qual: ${wireless_link_bar wlp2s0}
+  down: ${downspeedf wlp2s0} KiB/s
+  rate: ${wireless_bitrate wlp2s0}
+  $endif
+CPU${tab 2}${hr 2}
+$cpugraph
+ usage: $cpu% $cpubar
+ cores:
+  1: ${freq_g 1}GHz ${lua_parse pad ${cpu cpu1}}% ${cpubar cpu1}
+  2: ${freq_g 2}GHz ${lua_parse pad ${cpu cpu2}}% ${cpubar cpu2}
+  3: ${freq_g 3}GHz ${lua_parse pad ${cpu cpu3}}% ${cpubar cpu3}
+  4: ${freq_g 4}GHz ${lua_parse pad ${cpu cpu4}}% ${cpubar cpu4}
+
+DISK${tab 2}${hr 2}
+$diskiograph
+ space: $fs_bar
+  used: $fs_used, $fs_used_perc%
+   i/o: $diskio
+  temp: ${exec ~/.conky/scripts/get_hdd_temp.sh}
+
+MEMORY${tab 2}${hr 2}
+$memgraph
+ total: $memmax
+  used: $membar
+        $mem, $memperc%
+ top usage:
+  1. ${top_mem name 1}
+  2. ${top_mem name 2}
+  3. ${top_mem name 3}
+  4. ${top_mem name 4}
+  5. ${top_mem name 5}
+
+CMUS${tab 2}${hr 2}
+${if_match ${exec ~/.conky/scripts/get_cmus.sh}==0} status: ${exec ~/.conky/scripts/get_status.sh}
+   time: ${exec ~/.conky/scripts/get_time.sh}
+   song: ${scroll 15 ${exec ~/.conky/scripts/get_song.sh}}
+ artist: ${scroll 15 ${exec ~/.conky/scripts/get_artist.sh}}
+  album: ${scroll 15 ${exec ~/.conky/scripts/get_album.sh}}
+${execbar ~/.conky/scripts/get_progress.sh} $else cmus is not running $endif
+]]
