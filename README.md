@@ -1,0 +1,2 @@
+# sysmon
+My .conkyrc
